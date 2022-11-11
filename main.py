@@ -21,15 +21,25 @@ class AutoCheck(Configuration):
         username.send_keys(self.username)
         password = self.dr.find_element_by_xpath("//input[@type='password']")
         password.send_keys(self.password)
-        time.sleep(2)
+        time.sleep(1)
 
         self.dr.find_element_by_class_name("btn").click()
+        time.sleep(3)
+
+    def click(self, ele):
+        self.dr.execute_script("arguments[0].click()", ele)
+
+    def fuck(self):
+        ele = self.dr.find_elements_by_xpath("//span[contains(@class, 'choose-wapper')]")[1]
+        # self.click(ele)
         time.sleep(3)
 
     def checker(self, at_school):
         if at_school:
             # in campus
             active = self.dr.find_elements_by_xpath("//span[@class='choose-wapper active']")
+            for i in active:
+                self.click(i)
             time.sleep(1)
 
             gps = self.dr.find_element_by_xpath("//input[@placeholder='点击获取位置']")
@@ -38,12 +48,13 @@ class AutoCheck(Configuration):
 
             submit = self.dr.find_element_by_class_name("sub-info")
             print(submit.text)
-            if submit.text!="提交":
+            if submit.text != "提交":
+                print("提交失败")
                 return
             submit.click()
             time.sleep(2)
             verify = self.dr.find_element_by_xpath("//div[@class='wapcf-btn wapcf-btn-ok']")
-            print(verify.text)
+            print(verify.text + '?')
             verify.click()
             time.sleep(3)
         else:
@@ -53,8 +64,11 @@ class AutoCheck(Configuration):
         try:
             self.login()
             self.checker(at_school)
+            # self.fuck()
             self.dr.quit()
-        except:
+            print("打卡成功")
+        except Exception as e:
+            print(e.args)
             self.dr.quit()
 
 
